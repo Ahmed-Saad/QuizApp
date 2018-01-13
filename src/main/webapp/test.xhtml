@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>#{testMB.testObj.testName} Test</title>
+    </h:head>
+    <h:body>
+        <h:form id="form">
+            <p:dataGrid id="quiz" var="quiz" value="#{testMB.quizList}" columns="1" 
+                        rowIndexVar="index">
+
+                <f:facet name="header">
+                    #{testMB.testObj.testName} Test
+                </f:facet>
+
+                <p:panel header="#{index+1}" style="text-align:center">
+                    <h:panelGrid style="width:100%">
+                        <p:graphicImage value="#{quiz.quizImage}" rendered="#{quiz.quizImage != null}" height="200" width="200"/> 
+                        <h:outputText value="#{quiz.question}"/>
+                        <p:selectOneRadio id="customRadio" value="#{testMB.selectedAnswer}" layout="custom">
+                            <f:converter converterId="answerConverter"/>
+                            <f:selectItems value="#{quiz.answerList}" var="slAns" itemLabel="#{slAns}" itemValue="#{slAns}"/>
+                            <p:ajax listener="#{testMB.handleAnswers}"/>
+                        </p:selectOneRadio>
+                        <ui:repeat value="#{quiz.answerList}" var="a" varStatus="varStatus">
+                            <p:radioButton for=":form:quiz:customRadio" itemIndex="#{varStatus.index}" /> <p:spacer width="15px"/>
+                            <p:graphicImage value="#{a.answerMage}" rendered="#{a.answerMage != null}" height="50" width="50"/> <p:spacer rendered="#{a.answerMage != null}" width="15px"/>
+                            <h:outputText value="#{a.answer}"/> <p:spacer width="15px"/>
+                        </ui:repeat>
+                    </h:panelGrid>
+                </p:panel>
+                <f:facet name="footer">
+                    <p:commandButton value="Finish" actionListener="#{testMB.finishTest}" update=":form:mydlg" oncomplete="PF('mydlg').show();"/>
+                </f:facet>
+            </p:dataGrid>
+            <p:dialog header="Your Result is" modal="true" id="mydlg" widgetVar="mydlg" closable="true">
+                <h:outputText value="#{testMB.myResult}/#{testMB.quizList.size()}" /><br/>
+                <p:commandButton value="Take a new test" action="select-test?faces-redirect=true" ajax="false" />
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Setup Quiz</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:outputLabel value="Test Id is #{setupQuizMB.testId}"/>
+        <h:form id="myForm" enctype="multipart/form-data">
+            <p:growl id="growl" showDetail="true" sticky="true" life="3000"/>  
+            <p:fileUpload fileUploadListener="#{setupQuizMB.quizImageUpload}"
+                          mode="advanced"
+                          update="growl"
+                          label="Choose Quistion Image"
+                          sizeLimit="1048576"
+                          allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                          invalidSizeMessage="The maximum file size allowed is 1 Megabyte !"
+                          invalidFileMessage="You are allowed to upload only images !"
+                          />
+            <p:spacer width="8px"/>
+            <h:outputText value="Quistion" /><br/>
+            <p:inputTextarea id="quest" value="#{setupQuizMB.question}" rows="5" cols="30" counter="display" maxlength="500" counterTemplate="{0} characters remaining." autoResize="false" />
+            <br/>
+            <h:outputText id="display" /><br/><br/>
+            <h:outputLabel value="upload Image for answer"/><p:spacer width="8px"/>
+            <p:selectBooleanCheckbox value="#{setupQuizMB.showUpload}" >
+                <p:ajax event="change" update="ansUpload" /> 
+            </p:selectBooleanCheckbox>
+            <br/>
+            <h:panelGrid id="ansUpload">
+                <p:fileUpload  fileUploadListener="#{setupQuizMB.answerImageUpload}"
+                          mode="advanced"
+                          update="growl"
+                          label="Choose Quistion Image"
+                          sizeLimit="1048576"
+                          allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                          invalidSizeMessage="The maximum file size allowed is 1 Megabyte !"
+                          invalidFileMessage="You are allowed to upload only images !"
+                          rendered="#{setupQuizMB.showUpload}"/>
+            </h:panelGrid>
+            <h:outputLabel value="Insert Answers (if Answer is correct check it)"/><br/>
+            <p:inputText id="ans" value="#{setupQuizMB.answer}"/>
+            <p:spacer width="8px"/>
+            <p:selectBooleanCheckbox id="isCorrect" value="#{setupQuizMB.isCorrect}" disabled="#{setupQuizMB.isSelected}"/><br/><br/>
+            <p:commandButton value="add answer" process="@this ans isCorrect" actionListener="#{setupQuizMB.prepareAnswers}" update="growl ans isCorrect"/><br/><br/>
+            <p:commandButton value="create quiz" process="@this quest" actionListener="#{setupQuizMB.createQuiz}" update="growl ans quest isCorrect questNo"/>
+            <p:spacer width="15px"/>
+            <h:outputLabel id="questNo" value="Added #{setupQuizMB.quizNo} Questitions"/><br/><br/>
+            <p:commandButton value="Create New Test" process="@this" actionListener="#{setupQuizMB.createNewTest}" />
+        </h:form>
+        <h:form id="actionForm">
+            
+        </h:form>
+    </h:body>
+</html>
